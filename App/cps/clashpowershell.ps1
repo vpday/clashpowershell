@@ -158,21 +158,18 @@ function Check-File {
         Write-Host ""
         Write-Host $LocaleMessage.ClashNotFound -ForegroundColor Red
         Update-Clash
-        $ConsoleConfig.ClashLastCheck = ($(Get-Date) - $UnixTime1970).TotalMilliseconds
     }
 
     if (!(Test-Path $WebDashboardPath)) {
         Write-Host ""
         Write-Host $LocaleMessage.WebDashboardNotFound -ForegroundColor Red
         Update-WebDashboard
-        $ConsoleConfig.WebDashboardLastCheck = ($(Get-Date) - $UnixTime1970).TotalMilliseconds
     }
 
     if (!(Test-Path $GeoIPDbPath)) {
         Write-Host ""
         Write-Host $LocaleMessage.GeoIPDbNotFound -ForegroundColor Red
         Update-GeoIPDb
-        $ConsoleConfig.GeoIPDbLastCheck = ($(Get-Date) - $UnixTime1970).TotalMilliseconds
     }
 
     Write-Host $LocaleMessage.ConsoleFileChecked
@@ -184,7 +181,6 @@ function Check-Update {
     Write-Host $LocaleMessage.ConsoleUpdateChecking
 
     $currentDateTime = Get-Date
-    $currentUnixTime = ($currentDateTime - $UnixTime1970).TotalMilliseconds
 
     if ($ConsoleConfig.ClashCheckPeriod -gt 0) {
         $clashLastCheck = $UnixTime1970.AddMilliseconds($ConsoleConfig.ClashLastCheck).AddDays($ConsoleConfig.ClashCheckPeriod)
@@ -194,7 +190,6 @@ function Check-Update {
                 Update-Clash
                 Load-ClashVersion
             }
-            $ConsoleConfig.ClashLastCheck = $currentUnixTime
         }
     }
 
@@ -202,7 +197,6 @@ function Check-Update {
         $webDashboardLastCheck = $UnixTime1970.AddMilliseconds($ConsoleConfig.WebDashboardLastCheck).AddDays($ConsoleConfig.WebDashboardCheckPeriod)
         if ($currentDateTime.CompareTo($webDashboardLastCheck) -ge 0) {
             Update-WebDashboard
-            $ConsoleConfig.WebDashboardLastCheck = $currentUnixTime
         }
     }
 
@@ -210,7 +204,6 @@ function Check-Update {
         $geoIPDbLastCheck = $UnixTime1970.AddMilliseconds($ConsoleConfig.GeoIPDbLastCheck).AddDays($ConsoleConfig.GeoIPDbCheckPeriod)
         if ($currentDateTime.CompareTo($geoIPDbLastCheck) -ge 0) {
             Update-GeoIPDb
-            $ConsoleConfig.GeoIPDbLastCheck = $currentUnixTime
         }
     }
 
@@ -268,19 +261,16 @@ function Switch-Operation {
         }
         "C" {
             Update-Clash
-            $ConsoleConfig.ClashLastCheck = ($(Get-Date) - $UnixTime1970).TotalMilliseconds
             Out-Config
             Break
         }
         "G" {
             Update-GeoIPDb
-            $ConsoleConfig.WebDashboardLastCheck = ($(Get-Date) - $UnixTime1970).TotalMilliseconds
             Out-Config
             Break
         }
         "W" {
             Update-WebDashboard
-            $ConsoleConfig.GeoIPDbLastCheck = ($(Get-Date) - $UnixTime1970).TotalMilliseconds
             Out-Config
             Break
         }
@@ -465,13 +455,17 @@ function Update-Clash {
         Remove-Item $zipFileName
     }
 
-    Write-Host $LocaleMessage.ClashUpdated
-    Start-Sleep -Milliseconds 500
-
     if ($clashObject) {
         Start-Clash
         Enable-Proxy
     }
+
+    if ($ConsoleConfig.ClashCheckPeriod -gt 0) {
+        $ConsoleConfig.ClashLastCheck = ($(Get-Date) - $UnixTime1970).TotalMilliseconds
+    }
+
+    Write-Host $LocaleMessage.ClashUpdated
+    Start-Sleep -Milliseconds 500
 }
 
 function Update-WebDashboard {
@@ -493,6 +487,10 @@ function Update-WebDashboard {
         Remove-Item $packageFilePath
     }
 
+    if ($ConsoleConfig.WebDashboardCheckPeriod -gt 0) {
+        $ConsoleConfig.WebDashboardLastCheck = ($(Get-Date) - $UnixTime1970).TotalMilliseconds
+    }
+
     Write-Host $LocaleMessage.WebDashboardUpdated
     Start-Sleep -Milliseconds 500
 }
@@ -512,13 +510,17 @@ function Update-GeoIPDb {
     Write-Host $LocaleMessage.GeoIPDbMoving
     Move-Item -Path $($CurrentPath + "\" + $fileName) -Destination $GeoIPDbPath -Force
 
-    Write-Host $LocaleMessage.GeoIPDbUpdated
-    Start-Sleep -Milliseconds 500
-
     if ($clashObject) {
         Start-Clash
         Enable-Proxy
     }
+
+    if ($ConsoleConfig.GeoIPDbCheckPeriod -gt 0) {
+        $ConsoleConfig.GeoIPDbLastCheck = ($(Get-Date) - $UnixTime1970).TotalMilliseconds
+    }
+
+    Write-Host $LocaleMessage.GeoIPDbUpdated
+    Start-Sleep -Milliseconds 500
 }
 
 function Get-ClashRelease {
