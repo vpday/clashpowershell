@@ -1,0 +1,15 @@
+﻿{
+    "ClashControllerUrl":  "http://127.0.0.1:9090",
+    "ClashCheckPeriod":  7,
+    "ClashLastCheck":  -1,
+    "WebDashboardType":  "razord",
+    "WebDashboardCheckPeriod":  7,
+    "WebDashboardLastCheck":  -1,
+    "GeoIPDbCheckPeriod":  3,
+    "GeoIPDbLastCheck":  -1,
+    "GeoIPDbDownloadUrl":  "https://cdn.jsdelivr.net/gh/Hackl0us/GeoIP2-CN@release/Country.mmdb",
+    "SysProxyServer":  "127.0.0.1:7890",
+    "SysProxyBypass":  "localhost;0.0.0.0;127.*;10.*;100.64.*;192.168.*;<local>",
+    "IPQueryUrl":  "https://myip.ipip.net",
+    "GitHubProxyUrl":  "https://ghproxy.com"
+}
