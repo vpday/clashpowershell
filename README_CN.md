@@ -48,6 +48,6 @@
 
 ![main-menu](screenshots/main-menu-cn.jpg)
 
-## 版权声明
+## 开源协议
 
 [GNU General Public License v3.0](LICENSE)
