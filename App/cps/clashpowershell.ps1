@@ -569,9 +569,9 @@ function Load-ClashVersion {
         $clashVersionStr = $process.StandardOutput.ReadToEnd().Split(" ")[1]
         $ConsoleConfig.ClashPremium = !($clashVersionStr.IndexOf("v") -eq 0)
         if ($ConsoleConfig.ClashPremium) {
-            $ConsoleConfig.ClashVersion = "Premium "
+            $clashVersionStr = "Premium " + $clashVersionStr
         }
-        $ConsoleConfig.ClashVersion += $clashVersionStr
+        $ConsoleConfig.ClashVersion = $clashVersionStr
     }
     else {
         Write-Host ""
