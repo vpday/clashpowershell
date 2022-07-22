@@ -189,6 +189,8 @@ function Check-Update {
             if ($ClashReleaseObject.name -ne $ConsoleConfig.ClashVersion) {
                 Update-Clash
                 Load-ClashVersion
+            } else {
+                $ConsoleConfig.ClashLastCheck = ($(Get-Date) - $UnixTime1970).TotalMilliseconds
             }
         }
     }
@@ -598,13 +600,12 @@ function Test-ClashConfiguration {
     $process.Start() | Out-Null
     $process.WaitForExit() | Out-Null
 
-    if (0 -eq $process.ExitCode) {
-        Write-Host ""
-        Write-Host $process.StandardOutput.ReadToEnd()
-    }
-    else {
-        Write-Host ""
-        Start-SleepAndWrite 4 $process.StandardError.ReadToEnd() Red
+    Write-Host ""
+    Write-Host $process.StandardOutput.ReadToEnd()
+
+    $stderr = $process.StandardError.ReadToEnd()
+    if ($stderr) {
+        Write-Host $stderr
     }
 }
 
